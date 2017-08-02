@@ -16,10 +16,12 @@ WayraTouch::WayraTouch(int imput, int output)
 	_memonyInit = 0;
 	_menonyState = 1;
 	_state = 0;
+	*p_state = 0;
 	_showDebugState = 0;
 	_lastState = LOW;
 
 	pinMode(_imput, INPUT);
+	//pinMode(_output, OUTPUT);
 }
 
 void WayraTouch::Init() {
@@ -73,17 +75,19 @@ void WayraTouch::setDebug(bool show) {
 	_showDebugState = show;
 }
 
-void WayraTouch::Listen() {
+//void WayraTouch::Listen() {
+void WayraTouch::Listen(void *handleListen(bool)){
 	if (digitalRead(_imput) == HIGH) {
 		if (_lastState == LOW) {
 			_lastState = HIGH;
-			if (_state == LOW) {
-				_state = HIGH;
+			if (getState() == LOW) {
+				setState(HIGH);
+				handleListen(HIGH);
 			}
 			else {
-				_state = LOW;
+				setState(LOW);
+				handleListen(LOW);
 			}
-			setState(_state);
 		}
 	}else {
 		_lastState = LOW;
@@ -91,6 +95,8 @@ void WayraTouch::Listen() {
 }
 
 void WayraTouch::setState(bool state) {
+	_state = state;
+	*p_state = state;
 	if (state == HIGH) {
 		print("PRENDIDO", true);
 	}else {
@@ -99,6 +105,14 @@ void WayraTouch::setState(bool state) {
 	if (_autosave) {
 		EEPROM.write(_menonyState, state);
 	}
+}
+
+void WayraTouch::setGlobalState(bool *state) {
+	*p_state = *state;
+}
+
+bool WayraTouch::getState() {
+	return _state;
 }
 
 void WayraTouch::print(char* msg, bool newline) {

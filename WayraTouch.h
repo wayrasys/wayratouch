@@ -25,14 +25,16 @@ public:
 	void setOutPut(int output);
 	void setDebug(bool show);
 	void setState(bool state);
+	void setGlobalState(bool *state);
 
 	//Getters
 	int getAddress();
 	int getImput();
 	int getOutPut();
+	bool getState();
 
 	//Main
-	void Listen();
+	void Listen(void *handleListen(bool));
 
 	//private
 private:
@@ -42,6 +44,7 @@ private:
 	int _memonyInit; //Posicion en la mamoria indicando la inicializacion del modulo
 	int _menonyState; //Posicion en la memoria para guardar el stado del modulo
 	bool _state; //Estado de la salida
+	bool *p_state; //puntero al estado gral.
 	bool _showDebugState; //Imprime en el Serial el estado de la salida
 	bool _lastState; //bandera para controlar el estado
 	void print(char* msg, bool newline);
